@@ -76,6 +76,12 @@ public class InputValidation extends WorkflowStep {
 			maxSamples = Integer.parseInt(store.getString("samples.max"));
 		}
 
+		// Set max number of chunk Snp (used as average across chunks)
+		int maxChunkSnps = 20000;
+		if (store.getString("chunk.snps.max") != null){
+			maxChunkSnps = Integer.parseInt(store.getString("chunk.snps.max"));
+		}
+
 		List<VcfFile> validVcfFiles = new Vector<VcfFile>();
 
 		context.beginTask("Analyze files ");
@@ -228,6 +234,13 @@ public class InputValidation extends WorkflowStep {
 
 			if (!phased && (phasing == null || phasing.isEmpty() || phasing.equals("no_phasing"))) {
 				context.error("Your input data is unphased. Please select an algorithm for phasing.");
+				return false;
+			}
+
+			if ((double)noSnps/(double)chunks > (double)maxChunkSnps) {
+				context.error("Your upload data contains " + noSnps + " SNPs in " + chunks + " chunks.\n"
+					+"Input genotypes are expect to come from array genotypes with no more than\n"
+					+ maxChunkSnps + " SNPs expected per chunk.");
 				return false;
 			}
 
