@@ -19,7 +19,7 @@ jobs:
       - name: Run tests excluding ChrX
         run: mvn -Dtest=AllTestsNoChrX test
       - name: Package using Maven
-        run: mvn package
+        run: mvn package -DSkipTests
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
