@@ -16,8 +16,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
-      - name: Build with Maven
+      - name: Run tests excluding ChrX
         run: mvn -Dtest=AllTestsNoChrX test
+      - name: Package using Maven
+        run: mvn package -DskipTests
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
