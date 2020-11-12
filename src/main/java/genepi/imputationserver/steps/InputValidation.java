@@ -19,6 +19,14 @@ import genepi.imputationserver.util.RefPanel;
 import genepi.imputationserver.util.RefPanelList;
 import genepi.io.FileUtil;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+import java.util.Set;
+import java.util.HashSet;
+
 public class InputValidation extends WorkflowStep {
 
 	@Override
@@ -239,8 +247,19 @@ public class InputValidation extends WorkflowStep {
 
 			if ((double)noSnps/(double)chunks > (double)maxChunkSnps) {
 				context.error("Your upload data contains " + noSnps + " SNPs in " + chunks + " chunks.\n"
-					+"Input genotypes are expect to come from array genotypes with no more than\n"
+					+"Input genotypes are expected to come from array genotypes with no more than\n"
 					+ maxChunkSnps + " SNPs expected per chunk.");
+				return false;
+			}
+			
+			// Check if more than one copy of a chromosome are uploaded
+			Set<String> uniqueChromosomes = new HashSet<String>(chromosomes);
+			String chromString = String.join(" ", chromosomes);
+			
+			if(chromosomes.size() != uniqueChromosomes.size()){
+				context.error("Your upload data contains multiple copies of a single chromosome.\n"
+					+ "Input chromosomes: " + chromString + ".\n" 
+					+ "Input jobs can only have one file per chromosome.\n");
 				return false;
 			}
 
